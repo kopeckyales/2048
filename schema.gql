@@ -1,0 +1,331 @@
+directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
+input _ksListsMetaInput {
+  key: String
+  auxiliary: Boolean
+}
+
+type _ListAccess {
+  create: Boolean
+  read: JSON
+  update: JSON
+  delete: JSON
+  auth: JSON
+}
+
+type _ListInputTypes {
+  whereInput: String
+  whereUniqueInput: String
+  createInput: String
+  createManyInput: String
+  updateInput: String
+  updateManyInput: String
+}
+
+type _ListMeta {
+  key: String
+  name: String @deprecated(reason: "Use `key` instead")
+  description: String
+  label: String
+  singular: String
+  plural: String
+  path: String
+  access: _ListAccess
+  schema: _ListSchema
+}
+
+type _ListMutations {
+  create: String
+  createMany: String
+  update: String
+  updateMany: String
+  delete: String
+  deleteMany: String
+}
+
+type _ListQueries {
+  item: String
+  list: String
+  meta: String
+}
+
+type _ListSchema {
+  type: String
+  queries: _ListQueries
+  mutations: _ListMutations
+  inputTypes: _ListInputTypes
+  fields(where: _ListSchemaFieldsInput): [_ListSchemaFields]
+  relatedFields: [_ListSchemaRelatedFields]
+}
+
+type _ListSchemaFields {
+  path: String
+  name: String @deprecated(reason: "Use `path` instead")
+  type: String
+}
+
+input _ListSchemaFieldsInput {
+  type: String
+}
+
+type _ListSchemaRelatedFields {
+  type: String
+  fields: [String]
+}
+
+type _QueryMeta {
+  count: Int
+}
+
+type authenticateUserOutput {
+  token: String
+  item: User
+}
+
+enum CacheControlScope {
+  PUBLIC
+  PRIVATE
+}
+
+enum Direction {
+  Left
+  Right
+  Up
+  Down
+}
+
+type Game {
+  state: [[Int!]!]!
+  score: Int!
+  finished: Boolean!
+}
+
+input GameInput {
+  state: [[Int!]!]!
+  score: Int!
+  direction: Direction!
+}
+
+scalar JSON
+
+type Mutation {
+  createUser(data: UserCreateInput): User
+  createUsers(data: [UsersCreateInput]): [User]
+  updateUser(id: ID!, data: UserUpdateInput): User
+  updateUsers(data: [UsersUpdateInput]): [User]
+  deleteUser(id: ID!): User
+  deleteUsers(ids: [ID!]): [User]
+  createScore(data: ScoreCreateInput): Score
+  createScores(data: [ScoresCreateInput]): [Score]
+  deleteScore(id: ID!): Score
+  deleteScores(ids: [ID!]): [Score]
+  processGame(game: GameInput!): Game
+  authenticateUserWithPassword(email: String, password: String): authenticateUserOutput
+  unauthenticateUser: unauthenticateUserOutput
+  updateAuthenticatedUser(data: UserUpdateInput): User
+}
+
+type Query {
+  allUsers(
+    where: UserWhereInput
+    search: String
+    sortBy: [SortUsersBy!]
+    orderBy: String
+    first: Int
+    skip: Int
+  ): [User]
+  User(where: UserWhereUniqueInput!): User
+  _allUsersMeta(
+    where: UserWhereInput
+    search: String
+    sortBy: [SortUsersBy!]
+    orderBy: String
+    first: Int
+    skip: Int
+  ): _QueryMeta
+  _UsersMeta: _ListMeta
+  allScores(
+    where: ScoreWhereInput
+    search: String
+    sortBy: [SortScoresBy!]
+    orderBy: String
+    first: Int
+    skip: Int
+  ): [Score]
+  Score(where: ScoreWhereUniqueInput!): Score
+  _allScoresMeta(
+    where: ScoreWhereInput
+    search: String
+    sortBy: [SortScoresBy!]
+    orderBy: String
+    first: Int
+    skip: Int
+  ): _QueryMeta
+  _ScoresMeta: _ListMeta
+  _ksListsMeta(where: _ksListsMetaInput): [_ListMeta]
+  newGame: Game
+  appVersion: String
+  authenticatedUser: User
+}
+
+type Score {
+  _label_: String
+  id: ID
+  player: User
+  score: Int
+}
+
+input ScoreCreateInput {
+  score: Int
+}
+
+input ScoresCreateInput {
+  data: ScoreCreateInput
+}
+
+input ScoreWhereInput {
+  AND: [ScoreWhereInput]
+  OR: [ScoreWhereInput]
+  id: ID
+  id_not: ID
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID]
+  id_not_in: [ID]
+  player: UserWhereInput
+  player_is_null: Boolean
+  score: Int
+  score_not: Int
+  score_lt: Int
+  score_lte: Int
+  score_gt: Int
+  score_gte: Int
+  score_in: [Int]
+  score_not_in: [Int]
+}
+
+input ScoreWhereUniqueInput {
+  id: ID!
+}
+
+enum SortScoresBy {
+  id_ASC
+  id_DESC
+  player_ASC
+  player_DESC
+  score_ASC
+  score_DESC
+}
+
+enum SortUsersBy {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  email_ASC
+  email_DESC
+  isAdmin_ASC
+  isAdmin_DESC
+}
+
+type unauthenticateUserOutput {
+  success: Boolean
+}
+
+scalar Upload
+
+type User {
+  _label_: String
+  id: ID
+  name: String
+  email: String
+  isAdmin: Boolean
+  password_is_set: Boolean
+}
+
+input UserCreateInput {
+  name: String
+  email: String
+  isAdmin: Boolean
+  password: String
+}
+
+input UserRelateToOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+  disconnect: UserWhereUniqueInput
+  disconnectAll: Boolean
+}
+
+input UsersCreateInput {
+  data: UserCreateInput
+}
+
+input UsersUpdateInput {
+  id: ID!
+  data: UserUpdateInput
+}
+
+input UserUpdateInput {
+  name: String
+  email: String
+  isAdmin: Boolean
+  password: String
+}
+
+input UserWhereInput {
+  AND: [UserWhereInput]
+  OR: [UserWhereInput]
+  id: ID
+  id_not: ID
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID]
+  id_not_in: [ID]
+  name: String
+  name_not: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  name_i: String
+  name_not_i: String
+  name_contains_i: String
+  name_not_contains_i: String
+  name_starts_with_i: String
+  name_not_starts_with_i: String
+  name_ends_with_i: String
+  name_not_ends_with_i: String
+  name_in: [String]
+  name_not_in: [String]
+  email: String
+  email_not: String
+  email_contains: String
+  email_not_contains: String
+  email_starts_with: String
+  email_not_starts_with: String
+  email_ends_with: String
+  email_not_ends_with: String
+  email_i: String
+  email_not_i: String
+  email_contains_i: String
+  email_not_contains_i: String
+  email_starts_with_i: String
+  email_not_starts_with_i: String
+  email_ends_with_i: String
+  email_not_ends_with_i: String
+  email_in: [String]
+  email_not_in: [String]
+  isAdmin: Boolean
+  isAdmin_not: Boolean
+  password_is_set: Boolean
+}
+
+input UserWhereUniqueInput {
+  id: ID!
+}
